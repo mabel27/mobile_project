@@ -5,6 +5,7 @@
 var app = angular.module('MobileAngularUiExamples', [
   'ngRoute',
   'mobile-angular-ui',
+  'myApp.signIn',
   // touch/drag feature: this is from 'mobile-angular-ui.gestures.js'
   // it is at a very beginning stage, so please be careful if you like to use
   // in production. This is intended to provide a flexible, integrated and and 

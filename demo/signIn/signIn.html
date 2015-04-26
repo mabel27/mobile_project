@@ -10,15 +10,16 @@
       <legend>Sign In</legend>
         <div class="form-group has-success has-feedback">
           <label>UserName</label>
-          <input type="text"
-                 ng-model="userName"
+          <input type="email"
+                 ng-model="user.email"
                  class="form-control"
-                 placeholder="Enter a User Name">
+                 placeholder="Enter a email address">
         </div>
       
         <div class="form-group">
           <label>Password</label>
           <input type="password" 
+                 ng-model="user.password"
                  class="form-control"
                  placeholder="Password">
         </div>
@@ -26,13 +27,10 @@
     </fieldset>
     <hr>
 
-    <button class="btn btn-primary btn-block">
+    <button ng-click="SignIn($event)" class="btn btn-primary btn-block" type="submit">
       SignIn
     </button>
 
-    <div ui-content-for="navbarAction">
-      <a class='btn' ng-click='login()'>Login</a>
-    </div>
 
   </form>
  </div>
