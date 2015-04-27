@@ -4,8 +4,8 @@
 // 
 var app = angular.module('MobileAngularUiExamples', [
   'ngRoute',
+  'firebase',
   'mobile-angular-ui',
-  'myApp.signIn',
   // touch/drag feature: this is from 'mobile-angular-ui.gestures.js'
   // it is at a very beginning stage, so please be careful if you like to use
   // in production. This is intended to provide a flexible, integrated and and 
@@ -37,6 +37,7 @@ app.config(function ($routeProvider) {
   });
   $routeProvider.when('/signIn', {
     templateUrl: 'signIn.html',
+    controller: 'SignInCrtl',
     reloadOnSearch: false
   });
 
@@ -199,21 +200,33 @@ app.directive('carouselItem', function ($drag) {
 // for everything
 //
 
+app.controller('SignInCrtl', ['$scope','$firebaseSimpleLogin',function($scope,$firebaseSimpleLogin) {
 
-app.controller("myCtrl", function ($scope, $http) {
+  var firebaseObj = new Firebase("https://sizzling-fire-9382.firebaseio.com");
+  var loginObj = $firebaseSimpleLogin(firebaseObj);
 
- angular.extend($scope, {
-        signup: function () {
-          //alert(JSON.stringify($scope.model));
-          $http.post("https://young-sea-7392.herokuapp.com/v1/users", $scope.model).success($scope.GoodJob);
-        },
-        GoodJob: function (data) {
-          alert(JSON.stringify(data));
-        },
-        model: {},
-      });
+$scope.user={};
+    
+   $scope.SignIn = function(e) {
+e.preventDefault(); 
+    var username = $scope.user.email;
+    var password = $scope.user.password;
+     
+    loginObj.$login('password', {
+            email: username,
+            password: password
+        })
+        .then(function(user) {
+            // Success callback
+            alert('Authentication successful');
+          
+        }, function(error) {
+            // Failure callback
+            alert('Authentication failure');
+        });
+}
       
-    });
+}]);
 
   app.controller('MainController', function ($rootScope, $scope) {
 
