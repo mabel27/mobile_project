@@ -29,10 +29,12 @@ app.config(function ($routeProvider) {
   });
   $routeProvider.when('/information', {
     templateUrl: 'information.html',
+    controller: 'infoCrtl',
     reloadOnSearch: false
   });
   $routeProvider.when('/signUp', {
     templateUrl: 'signUp.html',
+    controller: 'SignUpCrtl',
     reloadOnSearch: false
   });
   $routeProvider.when('/signIn', {
@@ -200,198 +202,234 @@ app.directive('carouselItem', function ($drag) {
 // for everything
 //
 
-app.controller('SignInCrtl', ['$scope','$firebaseSimpleLogin',function($scope,$firebaseSimpleLogin) {
+app.controller('SignUpCrtl', ['$scope', '$location', '$firebaseAuth',
+  function ($scope, $location, $firebaseAuth) {
 
   var firebaseObj = new Firebase("https://sizzling-fire-9382.firebaseio.com");
-  var loginObj = $firebaseSimpleLogin(firebaseObj);
+  var auth = $firebaseAuth(firebaseObj);
+  $scope.signUp = function () {
 
-$scope.user={};
-    
-   $scope.SignIn = function(e) {
-e.preventDefault(); 
-    var username = $scope.user.email;
-    var password = $scope.user.password;
-     
-    loginObj.$login('password', {
-            email: username,
-            password: password
-        })
-        .then(function(user) {
-            // Success callback
-            alert('Authentication successful');
+    if (!$scope.register.$invalid) {
+
+      var email = $scope.user.email;
+      var password = $scope.user.password;
+
+      if (email && password) {
+
+        auth.$createUser(email, password)
+          .then(function () {
+
+            alert("New user Created");
+            $location.path('/signIn');
+          }, function (error) {
           
-        }, function(error) {
-            // Failure callback
-            alert('Authentication failure');
-        });
-}
-      
+          console.log(error);
+                    $scope.regError = true;
+                    $scope.regErrorMessage = error.message;
+          });
+      }
+    }
+  };
 }]);
 
-  app.controller('MainController', function ($rootScope, $scope) {
+app.controller('SignInCrtl', ['$scope', '$location', '$firebaseSimpleLogin',
+  function ($scope, $location, $firebaseSimpleLogin) {
 
-    // User agent displayed in home page
-    $scope.userAgent = navigator.userAgent;
+    var firebaseObj = new Firebase("https://sizzling-fire-9382.firebaseio.com");
+    var loginObj = $firebaseSimpleLogin(firebaseObj);
 
-    // Needed for the loading screen
-    $rootScope.$on('$routeChangeStart', function () {
-      $rootScope.loading = true;
-    });
+    $scope.user = {};
 
-    $rootScope.$on('$routeChangeSuccess', function () {
-      $rootScope.loading = false;
-    });
+    $scope.SignIn = function (e) {
+      e.preventDefault();
+      var username = $scope.user.email;
+      var password = $scope.user.password;
 
-    // Fake text i used here and there.
-    $scope.lorem = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel explicabo, aliquid eaque soluta nihil eligendi adipisci error, illum corrupti nam fuga omnis quod quaerat mollitia expedita impedit dolores ipsam. Obcaecati.';
+      loginObj.$login('password', {
+        email: username,
+        password: password
+      })
+        .then(function (user) {
+          // Success callback
+          alert('Authentication successful');
+          $location.path('/information');
 
-    // 
-    // 'Scroll' screen
-    // 
-    var scrollItems = [];
-
-    for (var i = 1; i <= 100; i++) {
-      scrollItems.push('Item ' + i);
+        }, function (error) {
+          // Failure callback
+          alert('Authentication failure');
+        });
     }
 
-    $scope.scrollItems = scrollItems;
+}]);
 
-    $scope.bottomReached = function () {
-      alert('Congrats you scrolled to the end of the list!');
-    }
+app.controller('infoCtrl', ['$scope','CommonProp', function($scope,CommonProp) {
+	$scope.username = CommonProp.getUser();
+}]);
 
-    // 
-    // Right Sidebar
-    // 
-    $scope.chatUsers = [
-      {
-        name: 'Carlos  Flowers',
-        online: true
+app.controller('MainController', function ($rootScope, $scope) {
+
+  // User agent displayed in home page
+  $scope.userAgent = navigator.userAgent;
+
+  // Needed for the loading screen
+  $rootScope.$on('$routeChangeStart', function () {
+    $rootScope.loading = true;
+  });
+
+  $rootScope.$on('$routeChangeSuccess', function () {
+    $rootScope.loading = false;
+  });
+
+  // Fake text i used here and there.
+  $scope.lorem = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel explicabo, aliquid eaque soluta nihil eligendi adipisci error, illum corrupti nam fuga omnis quod quaerat mollitia expedita impedit dolores ipsam. Obcaecati.';
+
+  // 
+  // 'Scroll' screen
+  // 
+  var scrollItems = [];
+
+  for (var i = 1; i <= 100; i++) {
+    scrollItems.push('Item ' + i);
+  }
+
+  $scope.scrollItems = scrollItems;
+
+  $scope.bottomReached = function () {
+    alert('Congrats you scrolled to the end of the list!');
+  }
+
+  // 
+  // Right Sidebar
+  // 
+  $scope.chatUsers = [
+    {
+      name: 'Carlos  Flowers',
+      online: true
       },
-      {
-        name: 'Byron Taylor',
-        online: true
+    {
+      name: 'Byron Taylor',
+      online: true
       },
-      {
-        name: 'Jana  Terry',
-        online: true
+    {
+      name: 'Jana  Terry',
+      online: true
       },
-      {
-        name: 'Darryl  Stone',
-        online: true
+    {
+      name: 'Darryl  Stone',
+      online: true
       },
-      {
-        name: 'Fannie  Carlson',
-        online: true
+    {
+      name: 'Fannie  Carlson',
+      online: true
       },
-      {
-        name: 'Holly Nguyen',
-        online: true
+    {
+      name: 'Holly Nguyen',
+      online: true
       },
-      {
-        name: 'Bill  Chavez',
-        online: true
+    {
+      name: 'Bill  Chavez',
+      online: true
       },
-      {
-        name: 'Veronica  Maxwell',
-        online: true
+    {
+      name: 'Veronica  Maxwell',
+      online: true
       },
-      {
-        name: 'Jessica Webster',
-        online: true
+    {
+      name: 'Jessica Webster',
+      online: true
       },
-      {
-        name: 'Jackie  Barton',
-        online: true
+    {
+      name: 'Jackie  Barton',
+      online: true
       },
-      {
-        name: 'Crystal Drake',
-        online: false
+    {
+      name: 'Crystal Drake',
+      online: false
       },
-      {
-        name: 'Milton  Dean',
-        online: false
+    {
+      name: 'Milton  Dean',
+      online: false
       },
-      {
-        name: 'Joann Johnston',
-        online: false
+    {
+      name: 'Joann Johnston',
+      online: false
       },
-      {
-        name: 'Cora  Vaughn',
-        online: false
+    {
+      name: 'Cora  Vaughn',
+      online: false
       },
-      {
-        name: 'Nina  Briggs',
-        online: false
+    {
+      name: 'Nina  Briggs',
+      online: false
       },
-      {
-        name: 'Casey Turner',
-        online: false
+    {
+      name: 'Casey Turner',
+      online: false
       },
-      {
-        name: 'Jimmie  Wilson',
-        online: false
+    {
+      name: 'Jimmie  Wilson',
+      online: false
       },
-      {
-        name: 'Nathaniel Steele',
-        online: false
+    {
+      name: 'Nathaniel Steele',
+      online: false
       },
-      {
-        name: 'Aubrey  Cole',
-        online: false
+    {
+      name: 'Aubrey  Cole',
+      online: false
       },
-      {
-        name: 'Donnie  Summers',
-        online: false
+    {
+      name: 'Donnie  Summers',
+      online: false
       },
-      {
-        name: 'Kate  Myers',
-        online: false
+    {
+      name: 'Kate  Myers',
+      online: false
       },
-      {
-        name: 'Priscilla Hawkins',
-        online: false
+    {
+      name: 'Priscilla Hawkins',
+      online: false
       },
-      {
-        name: 'Joe Barker',
-        online: false
+    {
+      name: 'Joe Barker',
+      online: false
       },
-      {
-        name: 'Lee Norman',
-        online: false
+    {
+      name: 'Lee Norman',
+      online: false
       },
-      {
-        name: 'Ebony Rice',
-        online: false
+    {
+      name: 'Ebony Rice',
+      online: false
       }
   ];
 
-    //
-    // 'Forms' screen
-    //  
-    $scope.rememberMe = true;
-    $scope.email = 'me@example.com';
+  //
+  // 'Forms' screen
+  //  
+  $scope.rememberMe = true;
+  $scope.email = 'me@example.com';
 
-    $scope.login = function () {
-      alert('You submitted the login form');
-    };
+  $scope.login = function () {
+    alert('You submitted the login form');
+  };
 
-    // 
-    // 'Drag' screen
-    // 
-    $scope.notices = [];
+  // 
+  // 'Drag' screen
+  // 
+  $scope.notices = [];
 
-    for (var j = 0; j < 10; j++) {
-      $scope.notices.push({
-        icon: 'envelope',
-        message: 'Notice ' + (j + 1)
-      });
+  for (var j = 0; j < 10; j++) {
+    $scope.notices.push({
+      icon: 'envelope',
+      message: 'Notice ' + (j + 1)
+    });
+  }
+
+  $scope.deleteNotice = function (notice) {
+    var index = $scope.notices.indexOf(notice);
+    if (index > -1) {
+      $scope.notices.splice(index, 1);
     }
-
-    $scope.deleteNotice = function (notice) {
-      var index = $scope.notices.indexOf(notice);
-      if (index > -1) {
-        $scope.notices.splice(index, 1);
-      }
-    };
-  });
+  };
+});
